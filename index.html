@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebFormExample</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <script src="https://login2explore.com/jpdb/resources/js/0.0.3/jpdb-commons.js"></script></head>
+
+    <style>
+        .container{
+            margin-top: 50px;
+        }
+        .st{
+            border: 1px solid black;
+            padding: 20px;
+            margin: 5px;
+            border-radius: 10px;
+        }
+    </style>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2 col-md-1"></div>
+            <div class="col-lg-8 col-md-10 st">
+                <h2>Vertical (basic) form</h2>
+                <br>
+                <form id="empForm" method="POST">
+                    <div class="form-group">
+                        <span>
+                            <label for="empId">Employee ID:</label>
+                            <label for="empIdMsg"></label>
+                        </span>
+                        <input type="text" class="form-control" name="empId" id="empId" placeholder="Enter Employee ID" required>
+                    </div>
+                    <div class="form-group">
+                        <span>
+                            <label for="empName">Employee Name:</label>
+                        </span>
+                        <input type="text" class="form-control" name="empName" id="empName" placeholder="Enter Employee Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="empEmail">Employee Email:</label>    
+                        <input type="email" class="form-control" name="empEmail" id="empEmail" placeholder="Enter Employee Email" required>
+                    </div>
+                    <br>
+                    <input type="button" class="btn btn-primary btn-lg" id="empSave" value="Save" onclick="saveEmployee()" style="width:100%">
+                </form>
+            </div>
+            <div class="col-lg-2 col-md-1"></div>
+        </div>
+    </div>
+
+    <script>
+        $('empId').focus();
+
+        function validateAndGetFormData(){
+            var empIdVar = $('#empId').val();
+            if(empIdVar === ""){
+                alert("Employee ID Required Value");
+                $("#empId").focus();
+                return "";
+            }
+            var empNameVar = $('#empName').val();
+            if(empNameVar === ""){
+                alert("Employee Name Required Value");
+                $("#empName").focus();
+                return "";
+            }
+            var empEmailVar = $('#empEmail').val();
+            if(empEmailVar === ""){
+                alert("Employee Email Required Value");
+                $("#empEmail").focus();
+                return "";
+            }
+
+            var jsonStrObj = {
+                empId:empIdVar,
+                empName:empNameVar,
+                empEmail:empEmailVar
+            };
+            return JSON.stringify(jsonStrObj);
+        }
+
+        function resetForm(){
+            $('#empId,#empName,#empEmail').val("");
+            $('#empID').focus()
+        }
+        function saveEmployee(){
+            //Here we check whether the data entered in form in OK or not.
+            var jsonStr = validateAndGetFormData();
+
+            if(jsonStr === ""){
+                return;
+            }
+            
+            //Creating PUT request here.
+            var putReqStr = createPUTRequest("90936014|-31948847125691722|90933807", jsonStr, "Employee","emp-rel1");
+            alert(putReqStr);
+
+
+            jQuery.ajaxSetup({async: false});
+            var resultObj = executeCommandAtGivenBaseUrl(putReqStr,"http://api.login2explore.com:5577", "/api/iml");
+            alert(JSON.stringify(resultObj));
+            jQuery.ajaxSetup({async: true});
+
+            resetForm();
+        }
+    </script>
+</body>
+</html>
